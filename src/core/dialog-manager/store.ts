@@ -10,10 +10,18 @@ type DialogState<
 };
 
 export const createDialogStore = <Props extends Record<string, unknown>>() => {
-	return create<DialogState<Props>>()((set) => ({
+	const useStore = create<DialogState<Props>>()((set) => ({
 		isOpen: false,
 		props: {} as Props,
 		close: () => set({ isOpen: false }),
 		open: (props: Props) => set({ isOpen: true, props }),
 	}));
+
+	return Object.assign(useStore, {
+		useIsOpen: () => useStore((s) => s.isOpen),
+		useOpen: () => useStore((s) => s.open),
+		useClose: () => useStore((s) => s.close),
+		useProps: () => useStore((s) => s.props),
+		useStore,
+	});
 };
