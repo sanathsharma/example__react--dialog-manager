@@ -27,7 +27,7 @@ const NoFlashDialog = lazy(
 );
 const PreloadedDialog = lazy(
 	() => import("@/examples/idle-preload/preloaded-dialog"),
-	1500,
+	10000, // This has no effect when prefetch, the spinner is still shown because React.lazy still suspends a promise atleaset once, the spinner is shown for a very short duration. A large delay is set here to demonstrate that it has no effect.
 );
 
 type Example = {

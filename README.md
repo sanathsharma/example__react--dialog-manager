@@ -2,6 +2,8 @@
 
 A store-backed dialog/modal system built on Zustand, with built-in Suspense support for lazy-loaded dialogs.
 
+Run `npm run dev` and open the app for a live demo of every pattern below — each card on the index page opens a dialog built with a different one, under `src/examples/`.
+
 ## Basic usage
 
 ```tsx
@@ -178,7 +180,7 @@ const EditProfileModal = lazy(() => import("./EditProfileModal"), 1000);
 
 ### Preloading on idle
 
-The wrapped `lazy()` also exposes a `preload` method. `@/lib/on-idle` exposes a `useIdlePreload` hook that calls `preload` once the browser goes idle after the initial page load, so a frequently used dialog never has to show its loader. The hook takes an `enabled` argument to skip preloading when a dialog won't be opened, for example when RBAC hides it from the current user.
+The wrapped `lazy()` also exposes a `preload` method. `@/lib/on-idle` exposes a `useIdlePreload` hook that calls `preload` once the browser goes idle after the initial page load, so a frequently used dialog's chunk is usually already cached by the time it's opened. React still suspends the first time a lazy component renders, even if its module is already loaded, so the loader can flash for a frame or two — but that's far shorter than the load time a cold click would otherwise pay. The hook takes an `enabled` argument to skip preloading when a dialog won't be opened, for example when RBAC hides it from the current user.
 
 ```tsx
 import { lazy } from "@/lib/lazy";

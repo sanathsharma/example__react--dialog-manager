@@ -18,14 +18,16 @@ export default function PreloadedDialog() {
 				<DialogHeader>
 					<DialogTitle>Preloaded on idle</DialogTitle>
 					<DialogDescription>
-						This chunk has an artificial 1.5s minimum display time, same
-						as the "default loader" example.
+						This chunk has an artificial 10sec minimum display time
 					</DialogDescription>
 				</DialogHeader>
 				<p>
 					`useIdlePreload` fetched it in the background once the page went
-					idle, so unless this tab is still busy loading, it opened without
-					showing a spinner at all.
+					idle, so its chunk was already cached before you clicked.
+					React still briefly suspends the first time a lazy component
+					renders, so a spinner can flash for a frame or two, but it opens
+					far sooner than the {'"'}default loader{'"'} example, which only
+					starts fetching on click.
 				</p>
 				<DialogFooter>
 					<Button onClick={close}>Close</Button>
