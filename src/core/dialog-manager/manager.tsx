@@ -2,13 +2,17 @@ import { Suspense } from "react";
 import { DefaultLoader } from "./default-loader";
 import type { createDialogStore } from "./store";
 
-type Props = {
-	store: ReturnType<typeof createDialogStore>;
-	render: (props: Record<string, unknown>) => React.ReactNode;
+type Props<DialogProps extends Record<string, unknown>> = {
+	store: ReturnType<typeof createDialogStore<DialogProps>>;
+	render: (props: DialogProps) => React.ReactNode;
 	loader?: React.ReactNode;
 };
 
-export function DialogManager({ store: useStore, render, loader }: Props) {
+export function DialogManager<DialogProps extends Record<string, unknown>>({
+	store: useStore,
+	render,
+	loader,
+}: Props<DialogProps>) {
 	const { isOpen, props } = useStore();
 
 	const _loader = loader ?? <DefaultLoader />;
