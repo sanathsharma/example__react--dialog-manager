@@ -13,7 +13,7 @@ export const createDialogStore = <Props extends Record<string, unknown>>() => {
 	const useStore = create<DialogState<Props>>()((set) => ({
 		isOpen: false,
 		props: {} as Props,
-		close: () => set({ isOpen: false }),
+		close: () => set({ isOpen: false, props: {} as Props }),
 		open: (props: Props) => set({ isOpen: true, props }),
 	}));
 
