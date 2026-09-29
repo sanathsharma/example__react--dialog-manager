@@ -68,6 +68,74 @@ const props = useEditProfile((s) => s.props);
 const firstName = useEditProfile((s) => s.props.firstName);
 ```
 
+## Awaiting a result
+
+`open()` doesn't return anything, so a caller can't `await` the value a user picks in the dialog. `Promise.withResolvers()` gives a promise and its `resolve` function as separate values, so the caller can hand `resolve` to the dialog as a prop and await the promise:
+
+```tsx
+type DeleteModalProps = {
+  itemName: string;
+  onAction: () => void;
+  onCancel: () => void;
+};
+
+export const useDeleteModal = createDialogStore<DeleteModalProps>();
+```
+
+```tsx
+function openDeleteModal(itemName: string) {
+  const { promise, resolve } = Promise.withResolvers<boolean>();
+  const { open, close } = useDeleteModal.getState();
+
+  open({
+    itemName,
+    onAction: () => {
+      resolve(true);
+      close();
+    },
+    onCancel: () => {
+      resolve(false);
+      close();
+    },
+  });
+
+  return promise;
+}
+```
+
+The caller awaits the result inline, instead of passing a callback and handling the response somewhere else:
+
+```tsx
+const confirmed = await openDeleteModal(item.name);
+if (confirmed) {
+  deleteItem(item.id);
+}
+```
+
+`DeleteModal` calls `onAction` when the user confirms and `onCancel` on dismiss, instead of calling `close()` directly:
+
+```tsx
+export const DeleteModal = (props: DeleteModalProps) => {
+  const { itemName, onAction, onCancel } = props;
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Delete {itemName}?</DialogTitle>
+        </DialogHeader>
+        <p>This can't be undone.</p>
+        <Button variant="destructive" onClick={onAction}>
+          Delete
+        </Button>
+      </DialogContent>
+    </Dialog>
+  );
+};
+```
+
+`Promise.withResolvers` is ES2024. Add `"ES2024"` (or later) to `lib` in `tsconfig.app.json`, or polyfill it, if the current target doesn't include it.
+
 ## Lazy loading
 
 `DialogManager` wraps its render function in a `Suspense` boundary with a default loader, so a dialog component can be imported lazily:
